@@ -69,7 +69,9 @@ header{
   appearance:none; cursor:pointer;
   font-family:var(--mono); font-size:11px; letter-spacing:.08em;
   color:var(--mut); background:none;
-  border:1px solid var(--line); border-radius:999px; padding:5px 13px;
+  border:1px solid var(--line); border-radius:999px;
+  height:32px; padding:0 13px; margin-right:50px;
+  display:inline-flex; align-items:center;
   transition:all .25s;
 }
 #autoBtn.on{ color:var(--green); border-color:rgba(143,224,77,.45); }
@@ -319,7 +321,7 @@ button:focus-visible{ outline:2px solid var(--green); outline-offset:3px; }
 }
 
   /* 语言切换按钮 */
-  .lang-btn{ position:fixed; top:12px; right:12px; z-index:99; min-width:40px; height:32px;
+  .lang-btn{ position:fixed; top:clamp(16px,3.5vw,28px); right:12px; z-index:99; min-width:40px; height:32px;
     padding:0 10px; border-radius:18px; border:1px solid rgba(255,255,255,.28);
     background:rgba(15,18,24,.55); color:#fff; font:600 13px/1 system-ui,-apple-system,sans-serif;
     cursor:pointer; backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); }

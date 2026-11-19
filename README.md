@@ -6,6 +6,16 @@
 
 > 从吉他调音器（[guitar-tuner](https://github.com/lccpws/guitar-tuner)）扩展而来，新增尤克里里、贝斯、小提琴支持。
 
+## 下载安卓 App（离线版）
+
+不想自己构建？直接下载安装即用的 APK（完全离线，无需联网）：
+
+- **[下载 乐器调音器 v1.4 APK](https://github.com/lccpws/instrument-tuner/raw/main/apk/instrument-tuner-v1.4.apk)**（包名 `com.weishuai.instrumenttuner`，桌面名「乐器调音器」，含吉他 / 尤克里里 / 贝斯 / 小提琴）
+
+> 若手机浏览器打开链接是预览而非下载，请点右上角菜单选择「下载链接 / 另存为」，或复制到电脑浏览器下载后传入手机。安装时如提示风险，选择「仍要安装」（应用未上架应用商店，属于正常提示）。需允许安装「未知来源」应用。
+
+只要吉他调音，可到 [guitar-tuner](https://github.com/lccpws/guitar-tuner) 下载单乐器版；两个 App 包名不同，可在同一台设备上共存、互不覆盖。
+
 ## 支持的乐器
 
 | 乐器 | 标准定弦 | 弦数 | 空弦音域 |

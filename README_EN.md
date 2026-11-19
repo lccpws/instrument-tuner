@@ -6,6 +6,16 @@ A free online tuner built on your phone or computer's microphone, supporting sta
 
 > Extended from the guitar tuner ([guitar-tuner](https://github.com/lccpws/guitar-tuner)), adding ukulele, bass, and violin support.
 
+## Download the Android App (offline)
+
+Don't want to build it yourself? Download the ready-to-install APK (fully offline, no internet required):
+
+- **[Download Instrument Tuner v1.4 APK](https://github.com/lccpws/instrument-tuner/raw/main/apk/instrument-tuner-v1.4.apk)** (package `com.weishuai.instrumenttuner`, launcher label "Instrument Tuner", includes guitar / ukulele / bass / violin)
+
+> If your mobile browser previews the link instead of downloading, open the menu and choose "Download link / Save as", or open it on a computer and transfer the file to your phone. If installation shows a risk warning, choose "Install anyway" (the app is not on the Play Store, so this is expected). You may need to allow installation from "unknown sources".
+
+For the guitar-only version, visit [guitar-tuner](https://github.com/lccpws/guitar-tuner) to download. The two apps have different package names and can coexist on the same device without overwriting each other.
+
 ## Supported Instruments
 
 | Instrument | Standard Tuning | Strings | Open-string Range |
