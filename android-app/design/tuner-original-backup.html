@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>调弦 · 吉他调音器</title>
+<style>
+/* 字体已本地化，完全离线可用 */
+@font-face{
+  font-family:"Fraunces";
+  src:url('fonts/fraunces-latin-full.woff2') format('woff2');
+  font-weight:300 600; font-display:swap;
+}
+@font-face{ font-family:"DM Mono"; src:url('fonts/dm-mono-300.woff2') format('woff2'); font-weight:300; font-display:swap; }
+@font-face{ font-family:"DM Mono"; src:url('fonts/dm-mono-400.woff2') format('woff2'); font-weight:400; font-display:swap; }
+@font-face{ font-family:"DM Mono"; src:url('fonts/dm-mono-500.woff2') format('woff2'); font-weight:500; font-display:swap; }
+
+:root{
+  --bg:        #232323;
+  --panel:     #2b2b2b;
+  --ink:       #f5f5f5;
+  --mut:       #9a9a9a;
+  --faint:     #666;
+  --line:      rgba(255,255,255,.09);
+  --green:     #8fe04d;
+  --green-deep:#5cab2e;
+  --amber:     #e3a44b;
+  --red:       #e07856;
+  --wood1:     #6b4226;
+  --wood2:     #3a2110;
+  --display:   "Fraunces","Noto Serif SC","Songti SC",serif;
+  --mono:      "DM Mono","SF Mono",monospace;
+  --body:      -apple-system,BlinkMacSystemFont,"PingFang SC","HarmonyOS Sans SC","Microsoft YaHei",sans-serif;
+}
+
+*{ margin:0; padding:0; box-sizing:border-box; }
+html,body{ height:100%; }
+
+body{
+  font-family:var(--body);
+  background:
+    radial-gradient(120% 60% at 50% 0%, #2a2a2a 0%, var(--bg) 60%, #1d1d1d 100%);
+  color:var(--ink);
+  min-height:100dvh;
+  display:flex; flex-direction:column;
+  overflow-x:hidden;
+  -webkit-tap-highlight-color:transparent;
+}
+
+.wrap{
+  width:min(560px,100%);
+  margin:0 auto;
+  padding:clamp(16px,3.5vw,28px) 22px calc(24px + env(safe-area-inset-bottom));
+  display:flex; flex-direction:column; flex:1;
+}
+
+/* ── 页眉 ─────────────────────── */
+header{
+  display:flex; align-items:center; justify-content:space-between;
+  padding-bottom:12px; border-bottom:1px solid var(--line);
+}
+.brand{ display:flex; align-items:baseline; gap:10px; }
+.brand h1{ font-family:var(--display); font-weight:500; font-size:20px; letter-spacing:.06em; }
+.brand .en{
+  font-family:var(--mono); font-size:10px; font-weight:300;
+  color:var(--faint); letter-spacing:.26em; text-transform:uppercase;
+}
+#autoBtn{
+  appearance:none; cursor:pointer;
+  font-family:var(--mono); font-size:11px; letter-spacing:.08em;
+  color:var(--mut); background:none;
+  border:1px solid var(--line); border-radius:999px; padding:5px 13px;
+  transition:all .25s;
+}
+#autoBtn.on{ color:var(--green); border-color:rgba(143,224,77,.45); }
+#autoBtn .dot{
+  display:inline-block; width:6px; height:6px; border-radius:50%;
+  background:var(--faint); margin-right:7px; vertical-align:1px;
+  transition:all .25s;
+}
+#autoBtn.on .dot{ background:var(--green); box-shadow:0 0 7px rgba(143,224,77,.8); }
+
+/* ── 频率显示 ─────────────────────── */
+.stage{ display:flex; flex-direction:column; align-items:center; }
+
+.freq-display{
+  margin-top:clamp(12px,3vh,26px);
+  font-family:var(--mono); font-weight:300;
+  display:flex; align-items:baseline; gap:8px;
+  transition:color .2s;
+}
+.freq-display .num{
+  font-size:clamp(42px,12vw,60px); line-height:1;
+  letter-spacing:-.02em; min-width:2.6em; text-align:center;
+}
+.freq-display .unit{ font-size:16px; color:var(--mut); }
+.freq-display.ok .num{ color:var(--green); }
+
+.target{
+  margin-top:10px;
+  font-family:var(--mono); font-size:13px; font-weight:300;
+  color:var(--mut); letter-spacing:.05em; min-height:18px;
+}
+.reading{
+  margin-top:6px; min-height:16px;
+  font-family:var(--mono); font-size:11px; font-weight:300;
+  color:var(--faint); letter-spacing:.02em; text-align:center;
+}
+
+/* ── 标志线标尺 ─────────────────────── */
+.ruler{
+  position:relative;
+  width:min(400px,100%);
+  height:96px;
+  margin-top:20px;
+}
+.ruler .track{
+  position:absolute; left:0; right:0; top:62px; height:2px;
+  background:rgba(255,255,255,.13); border-radius:1px;
+}
+.tick{
+  position:absolute; width:1px; background:rgba(255,255,255,.22);
+  top:58px; height:10px;
+}
+.tick.major{ top:54px; height:18px; background:rgba(255,255,255,.4); }
+.refline{
+  position:absolute; left:50%; top:48px; height:30px; width:2px;
+  margin-left:-1px; background:#fff; border-radius:1px;
+  box-shadow:0 0 6px rgba(255,255,255,.5);
+}
+.refline::after{
+  content:""; position:absolute; left:50%; bottom:-7px;
+  transform:translateX(-50%);
+  border:5px solid transparent; border-top-color:#fff;
+}
+.marker{
+  position:absolute; top:0; left:50%; width:0;
+  transition:left .12s linear;
+}
+.marker .stem{
+  position:absolute; left:-1.5px; top:44px; width:3px; height:34px;
+  background:var(--green); border-radius:2px;
+  box-shadow:0 0 9px rgba(143,224,77,.55);
+}
+.marker .bubble{
+  position:absolute; left:-21px; top:-6px;
+  width:42px; height:42px; border-radius:50%;
+  background:#333; border:1.5px solid var(--green);
+  color:var(--ink);
+  font-family:var(--mono); font-size:15px; font-weight:500;
+  display:flex; align-items:center; justify-content:center;
+  transition:background .2s, color .2s, box-shadow .2s;
+}
+.marker .bubble.ok{
+  background:var(--green); color:#151515;
+  box-shadow:0 0 16px rgba(143,224,77,.6);
+}
+/* 偏差超出标尺量程、指针钉在边缘时的警示色 */
+.marker .bubble.out{ border-color:var(--red); color:var(--red); }
+.ruler-labels{
+  width:min(400px,100%);
+  display:flex; justify-content:space-between;
+  margin-top:2px;
+  font-family:var(--mono); font-size:11px; color:var(--faint);
+}
+
+/* ── 音符刻度条 ─────────────────────── */
+.notes{
+  display:flex; justify-content:center; align-items:baseline;
+  gap:clamp(16px,7vw,40px);
+  margin-top:14px; min-height:40px;
+}
+.nt{
+  font-family:var(--display); font-weight:300;
+  color:var(--faint); font-size:19px;
+  width:2.4em; text-align:center;
+  transition:color .25s, font-size .25s;
+}
+.nt sub{ font-size:.55em; vertical-align:baseline; margin-left:1px; }
+.nt.cur{
+  color:#fff; font-size:36px; font-weight:500;
+}
+
+/* ── 状态 ─────────────────────── */
+.status{
+  margin-top:12px; min-height:20px;
+  font-family:var(--mono); font-size:14px; letter-spacing:.12em;
+  color:var(--mut); transition:color .2s;
+  text-align:center;
+}
+.status.ok{ color:var(--green); }
+.status.low{ color:var(--amber); }
+.status.high{ color:var(--red); }
+.status.unknown{ color:var(--amber); }
+.status.stale{ color:var(--mut); }
+.status.danger{ color:var(--red); font-weight:600; letter-spacing:.06em; }
+
+/* ── 安全提示条 ─────────────────────── */
+.warn{
+  width:min(400px,100%);
+  margin-top:10px; padding:9px 12px;
+  border:1px solid rgba(224,120,86,.45);
+  border-radius:8px;
+  background:rgba(224,120,86,.10);
+  color:#f0b39c;
+  font-size:12px; line-height:1.65; text-align:center;
+}
+.warn[hidden]{ display:none; }
+.warn.strong{
+  background:rgba(224,120,86,.26);
+  border-color:rgba(224,120,86,.85);
+  color:#fff; font-weight:600;
+}
+
+.lvl{
+  width:150px; height:3px; border-radius:2px; margin-top:10px;
+  background:rgba(255,255,255,.1); overflow:hidden;
+}
+.lvl i{
+  display:block; height:100%; width:0%;
+  background:var(--green); border-radius:2px;
+  transition:width .1s linear;
+}
+
+/* ── 琴头选弦区 ─────────────────────── */
+.head{
+  display:grid;
+  grid-template-columns:58px 1fr 58px;
+  gap:10px;
+  margin-top:auto; padding-top:14px;
+}
+.pcol{ display:flex; flex-direction:column; justify-content:space-around; }
+.pbtn{
+  appearance:none; cursor:pointer;
+  width:52px; height:52px; border-radius:50%;
+  border:1.5px solid rgba(255,255,255,.3);
+  background:transparent; color:#c9c9c9;
+  font-family:var(--display); font-size:19px; font-weight:400;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  line-height:1; transition:all .2s;
+}
+.pbtn sub{ font-size:10px; margin-top:2px; opacity:.75; }
+@media (hover:hover){
+  .pbtn:not(.active):hover{ border-color:rgba(255,255,255,.6); color:#fff; }
+}
+.pbtn.active{
+  background:#fff; color:#161616; border-color:#fff;
+  box-shadow:0 0 14px rgba(255,255,255,.3);
+}
+.neck{ width:100%; display:block; }
+.strline{ transition:stroke .25s; }
+.strline.on{ stroke:var(--green); filter:drop-shadow(0 0 3px rgba(143,224,77,.8)); }
+
+footer{
+  text-align:center; padding-top:14px;
+  font-size:11px; color:var(--faint); letter-spacing:.04em; line-height:1.8;
+}
+footer b{ color:var(--mut); font-weight:500; }
+
+/* ── 启动遮罩 ─────────────────────── */
+#gate{
+  position:fixed; inset:0; z-index:10;
+  background:rgba(20,20,20,.94); backdrop-filter:blur(6px);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:22px; padding:32px; text-align:center;
+  transition:opacity .5s;
+}
+#gate.hide{ opacity:0; pointer-events:none; }
+#gate .g-wire{ width:110px; height:3px; border-radius:2px;
+  background:linear-gradient(180deg,#9a8a70,#4a3f30); }
+#gate h2{ font-family:var(--display); font-weight:500; font-size:30px; }
+#gate p{ color:var(--mut); font-size:14px; line-height:1.8; max-width:300px; }
+#gate .gtip{
+  color:var(--amber); font-size:12px; line-height:1.7; max-width:320px;
+}
+#startBtn{
+  appearance:none; cursor:pointer;
+  font-family:var(--body); font-size:16px; letter-spacing:.2em;
+  color:#161616; background:var(--green);
+  border:none; border-radius:999px; padding:15px 52px;
+  box-shadow:0 6px 28px rgba(143,224,77,.3);
+  transition:transform .15s;
+}
+#startBtn:active{ transform:scale(.96); }
+#gate .err{ color:var(--red); font-size:13px; min-height:18px; }
+
+button:focus-visible{ outline:2px solid var(--green); outline-offset:3px; }
+
+@media (max-width:400px){
+  .pbtn{ width:46px; height:46px; font-size:17px; }
+  .head{ grid-template-columns:50px 1fr 50px; }
+}
+
+@media (prefers-reduced-motion:reduce){
+  *{ transition:none !important; animation:none !important; }
+}
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <div class="g-wire"></div>
+  <h2>调弦</h2>
+  <p>标准定弦 · E A D G B E<br>点击开启麦克风，然后拨响一根空弦。</p>
+  <p class="gtip">安全提示：每次只拧 1/8 圈，边拧边拨。宁可先放松再往回拧，不要一次拧到位；读数长时间停在「偏低」时请立即停手检查。</p>
+  <button id="startBtn">开启麦克风</button>
+  <div class="err" id="gateErr"></div>
+</div>
+
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <h1>调弦</h1>
+      <span class="en">Guitar Tuner</span>
+    </div>
+    <button id="autoBtn" class="on"><span class="dot"></span>自动识别</button>
+  </header>
+
+  <div class="stage">
+    <div class="freq-display" id="freqBox">
+      <span class="num" id="freqVal">--</span><span class="unit">Hz</span>
+    </div>
+    <div class="target" id="targetLine">自动识别 · 拨响任意一根弦</div>
+    <div class="reading" id="readingLine">等待拨弦</div>
+
+    <div class="ruler" id="ruler">
+      <div class="track"></div>
+      <div class="refline"></div>
+      <div class="marker" id="marker">
+        <div class="bubble" id="bubble">–</div>
+        <div class="stem"></div>
+      </div>
+    </div>
+    <div class="ruler-labels"><span>♭ 50¢</span><span>0</span><span>♯ 50¢</span></div>
+
+    <div class="notes" id="notes"></div>
+
+    <div class="status" id="status">拨响任意一根弦</div>
+    <div class="warn" id="warn" hidden></div>
+    <div class="lvl"><i id="lvlBar"></i></div>
+  </div>
+
+  <div class="head">
+    <div class="pcol" id="pegLeft"></div>
+    <svg class="neck" viewBox="0 0 120 210" aria-hidden="true">
+      <defs>
+        <linearGradient id="woodG" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stop-color="#3a2110"/>
+          <stop offset=".5" stop-color="#6b4226"/>
+          <stop offset="1" stop-color="#3a2110"/>
+        </linearGradient>
+      </defs>
+      <path d="M 31 14 L 89 14 L 95 210 L 25 210 Z" fill="url(#woodG)"/>
+      <rect x="18" y="8" width="84" height="6" rx="3" fill="#ded6c4"/>
+      <line x1="33" y1="80" x2="87" y2="80" stroke="rgba(255,255,255,.14)" stroke-width="1.5"/>
+      <line x1="34" y1="145" x2="86" y2="145" stroke="rgba(255,255,255,.14)" stroke-width="1.5"/>
+      <g id="strlines"></g>
+    </svg>
+    <div class="pcol" id="pegRight"></div>
+  </div>
+
+  <footer>
+    <b>安全调弦</b> · 每次只拧 1/8 圈，拧完必须重新拨弦核对；先放松再往回拧，不要一次拧到位。<br>
+    若读数不随拧动上升、或页面提示明显偏高，请立刻停手。建议在安静环境中使用，手机距吉他 30–50 cm。
+  </footer>
+</div>
+
+<script>
+"use strict";
+
+/* ── 常量 ─────────────────────────── */
+const STRINGS = [
+  { note:"E", oct:2, hz:82.41  },
+  { note:"A", oct:2, hz:110.00 },
+  { note:"D", oct:3, hz:146.83 },
+  { note:"G", oct:3, hz:196.00 },
+  { note:"B", oct:3, hz:246.94 },
+  { note:"E", oct:4, hz:329.63 },
+];
+const NOTE_NAMES = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
+const RANGE         = 50;    // 标尺满量程音分
+const OK_CENTS      = 5;     // "准了"容差（消费级麦克风下 3¢ 过于苛刻）
+const LOCK_FRAMES   = 6;     // 连续稳定帧才判定"准了"
+const MATCH_CENTS   = 60;    // 自动选弦 / 允许给出方向指令的最大偏差
+const DANGER_CENTS  = 100;   // 明显高于目标：禁止继续拧紧
+const OCTAVE_GUARD  = 700;   // 低于目标超过此值视为八度/谐波误判，一律拒绝给拧紧指令
+const F_MIN = 70, F_MAX = 450;   // 吉他空弦合理频率范围（含余量）
+const CLARITY_MIN   = 0.62;  // 周期性置信度门槛，挡噪声/杂音/泛音
+const STALE_MS      = 250;   // 读数超过此年龄即不再给出任何方向指令
+const HOLD_MS       = 700;   // 读数完全过期，清空显示
+const FRAME_MS      = 33;    // 音高检测节流约 30fps
+const NS = "http://www.w3.org/2000/svg";
+
+/* ── DOM ─────────────────────────── */
+const $ = id => document.getElementById(id);
+const freqBox = $("freqBox"), freqVal = $("freqVal"), targetLine = $("targetLine");
+const readingLine = $("readingLine"), warnEl = $("warn");
+const rulerEl = $("ruler"), markerEl = $("marker"), bubbleEl = $("bubble");
+const notesEl = $("notes"), statusEl = $("status"), lvlBar = $("lvlBar");
+const autoBtn = $("autoBtn"), gate = $("gate"), startBtn = $("startBtn"), gateErr = $("gateErr");
+const pegLeft = $("pegLeft"), pegRight = $("pegRight"), strlinesG = $("strlines");
+
+/* ── 状态 ─────────────────────────── */
+let audioCtx = null, analyser = null, buf = null;
+let autoMode = true, activeIdx = -1;
+let smoothCents = null, dispFreq = null, lastTrendF = null;
+let hist = [], pending = null;
+let tunedFrames = 0, tunedLock = false;
+let autoCand = null;
+let lastValid = 0, lastFrame = 0;
+const pegBtns = [];
+
+/* ── 标尺刻度 ─────────────────────── */
+for (let c = -RANGE; c <= RANGE; c += 5){
+  const t = document.createElement("div");
+  t.className = "tick" + (c % 25 === 0 ? " major" : "");
+  t.style.left = (50 + c / RANGE * 50) + "%";
+  rulerEl.appendChild(t);
+}
+
+/* ── 琴头：弦线 + 选弦按钮 ───────────── */
+const STR_W = [3.5, 3, 2.5, 2, 1.6, 1.2];
+STRINGS.forEach((s, i) => {
+  const x = 27 + i * 13;
+  const ln = document.createElementNS(NS, "line");
+  ln.setAttribute("x1", x); ln.setAttribute("y1", 12);
+  ln.setAttribute("x2", x); ln.setAttribute("y2", 210);
+  ln.setAttribute("stroke", "#cfc6b4");
+  ln.setAttribute("stroke-width", STR_W[i]);
+  ln.setAttribute("stroke-linecap", "round");
+  ln.setAttribute("class", "strline");
+  ln.dataset.i = i;
+  strlinesG.appendChild(ln);
+});
+
+function makePegBtn(i){
+  const s = STRINGS[i];
+  const b = document.createElement("button");
+  b.className = "pbtn";
+  b.innerHTML = `${s.note}<sub>${s.oct}</sub>`;
+  b.setAttribute("aria-label", `${s.note}${s.oct} 弦`);
+  b.addEventListener("click", () => {
+    autoMode = false;
+    autoBtn.classList.remove("on");
+    setActive(i);
+  });
+  pegBtns[i] = b;
+  return b;
+}
+/* 左列 D A E（上→下），右列 G B E —— 与真实琴头一致 */
+[2, 1, 0].forEach(i => pegLeft.appendChild(makePegBtn(i)));
+[3, 4, 5].forEach(i => pegRight.appendChild(makePegBtn(i)));
+
+autoBtn.addEventListener("click", () => {
+  autoMode = true;
+  autoBtn.classList.add("on");
+  setActive(-1);
+});
+
+/* ── 音名工具 ─────────────────────── */
+function noteNum(hz){ return Math.round(69 + 12 * Math.log2(hz / 440)); }
+function noteLabel(n){
+  return { name: NOTE_NAMES[((n % 12) + 12) % 12], oct: Math.floor(n / 12) - 1 };
+}
+function centsOf(f, target){ return 1200 * Math.log2(f / target); }
+function median(arr){
+  const s = [...arr].sort((a, b) => a - b);
+  return s[s.length >> 1];
+}
+
+/* ── 选中琴弦 → 更新静态区 ───────────── */
+function setActive(i){
+  if (i !== activeIdx){
+    smoothCents = null;
+    dispFreq = null;
+    tunedFrames = 0;
+    tunedLock = false;
+    autoCand = null;
+    /* 不清空 hist：频率历史与"哪根弦"无关，清空会造成读数空窗 */
+  }
+  activeIdx = i;
+  pegBtns.forEach((b, k) => b.classList.toggle("active", k === i));
+  [...strlinesG.children].forEach(l =>
+    l.classList.toggle("on", Number(l.dataset.i) === i));
+
+  if (i < 0){
+    targetLine.textContent = "自动识别 · 拨响任意一根弦";
+    notesEl.innerHTML = "";
+    return;
+  }
+  const s = STRINGS[i];
+  targetLine.textContent = `${s.note}${s.oct} 弦 · 目标 ${s.hz.toFixed(2)} Hz`;
+  const n = noteNum(s.hz);
+  notesEl.innerHTML = "";
+  for (let k = -2; k <= 2; k++){
+    const { name, oct } = noteLabel(n + k);
+    const el = document.createElement("span");
+    el.className = "nt" + (k === 0 ? " cur" : "");
+    el.innerHTML = `${name}<sub>${oct}</sub>`;
+    notesEl.appendChild(el);
+  }
+}
+
+/* ── 启动麦克风 ─────────────────────── */
+startBtn.addEventListener("click", async () => {
+  gateErr.textContent = "";
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      audio: {
+        echoCancellation: false,   /* 调音器必须关闭 DSP：会改变波形与音高 */
+        noiseSuppression: false,
+        autoGainControl: false,
+        channelCount: 1
+      }
+    });
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)(
+      { latencyHint: "interactive" });
+    await audioCtx.resume();
+    const src = audioCtx.createMediaStreamSource(stream);
+    analyser = audioCtx.createAnalyser();
+    /* 4096 样本 ≈ 85ms @48kHz，低音 E2 有约 7 个完整周期；
+       旧的 2048 只有 3.5 个周期，长 lag 自相关极不稳定 */
+    analyser.fftSize = 4096;
+    src.connect(analyser);
+    buf = new Float32Array(analyser.fftSize);
+    gate.classList.add("hide");
+    loop();
+  } catch (e) {
+    gateErr.textContent = e.name === "NotAllowedError"
+      ? "麦克风权限被拒绝，请在浏览器设置中允许后重试。"
+      : "无法访问麦克风：" + (e.message || e.name);
+  }
+});
+
+/* ── 基频检测：YIN / CMND ─────────────
+   相比旧版自相关：
+   · 去直流 + 一阶高通，抑制 50Hz 工频与桌面隆隆
+   · 差分函数取绝对阈值下的第一个谷，不再"取第一个 0.85×峰值"
+     —— 后者在谐波丰富的吉他信号上极易命中倍频峰
+   · 输出 clarity（周期性置信度），噪声帧直接判无效         */
+function detectPitch(input, sampleRate){
+  const N = input.length;
+
+  /* 去直流 */
+  let mean = 0;
+  for (let i = 0; i < N; i++) mean += input[i];
+  mean /= N;
+
+  const x = new Float32Array(N);
+  let rms = 0, prevX = 0, prevY = 0;
+  const R = 0.995;   // 一阶高通，截止约 38Hz @48kHz，几乎不影响 82Hz 基频
+  for (let i = 0; i < N; i++){
+    const v = input[i] - mean;
+    const y = R * (prevY + v - prevX);
+    prevX = v; prevY = y;
+    x[i] = y;
+    rms += y * y;
+  }
+  rms = Math.sqrt(rms / N);
+  if (rms < 0.004) return { rms, freq: -1, clarity: 0 };
+
+  const W = Math.min(1536, Math.floor(N / 2));
+  const maxTau = Math.min(Math.floor(sampleRate / 65), N - W - 2);
+  const minTau = Math.max(2, Math.floor(sampleRate / 900));
+  if (maxTau <= minTau + 2) return { rms, freq: -1, clarity: 0 };
+
+  /* 差分函数 d(tau) */
+  const d = new Float32Array(maxTau + 2);
+  for (let tau = 1; tau <= maxTau + 1; tau++){
+    let s = 0;
+    for (let j = 0; j < W; j++){
+      const v = x[j] - x[j + tau];
+      s += v * v;
+    }
+    d[tau] = s;
+  }
+
+  /* 累积均值归一化 CMND */
+  const cmnd = new Float32Array(maxTau + 2);
+  cmnd[0] = 1;
+  let running = 0;
+  for (let tau = 1; tau <= maxTau + 1; tau++){
+    running += d[tau];
+    cmnd[tau] = running > 0 ? d[tau] * tau / running : 1;
+  }
+
+  /* 绝对阈值找第一个谷，并走到谷底（YIN step 3） */
+  const TH = 0.12;
+  let tau = -1;
+  for (let t = minTau; t <= maxTau; t++){
+    if (cmnd[t] < TH){
+      while (t + 1 <= maxTau && cmnd[t + 1] < cmnd[t]) t++;
+      tau = t;
+      break;
+    }
+  }
+  if (tau < 0){
+    let lowest = Infinity;
+    for (let t = minTau; t <= maxTau; t++){
+      if (cmnd[t] < lowest){ lowest = cmnd[t]; tau = t; }
+    }
+    if (1 - lowest < 0.60) return { rms, freq: -1, clarity: 1 - lowest };
+  }
+  const clarity = 1 - cmnd[tau];
+  if (clarity < 0.60) return { rms, freq: -1, clarity };
+
+  /* 抛物线插值，亚采样精度 */
+  const y1 = cmnd[tau - 1], y2 = cmnd[tau], y3 = cmnd[tau + 1];
+  const denom = 2 * (2 * y2 - y1 - y3);
+  const shift = Math.abs(denom) > 1e-9 ? (y3 - y1) / denom : 0;
+  const t = tau + Math.max(-0.5, Math.min(0.5, shift));
+  const freq = sampleRate / t;
+  if (freq < 65 || freq > 900) return { rms, freq: -1, clarity };
+  return { rms, freq, clarity };
+}
+
+/* ── 帧频接受：绝不修改频率数值 ─────────
+   旧版会把 f 相对上一帧 ×2 / ÷2 折叠，一旦第一帧错或换了弦，
+   整段拨弦都被锁死在错误八度（196Hz → 98Hz），这是断弦的直接原因。
+   现在只做：范围/置信度过滤 + 短窗口中值 + 大幅跳变时重置（不折半）。 */
+function acceptFreq(f, clarity){
+  if (f < F_MIN || f > F_MAX || clarity < CLARITY_MIN) return false;
+  if (hist.length){
+    const prev = median(hist);
+    if (Math.abs(centsOf(f, prev)) > 70){
+      /* 疑似换弦或野值：连续 2 帧一致才重置窗口，重置后立即采纳新值 */
+      if (!pending || Math.abs(centsOf(f, pending.f)) > 25) pending = { f, n: 1 };
+      else pending = { f, n: pending.n + 1 };
+      if (pending.n < 2) return false;
+      hist = [];
+      pending = null;
+    } else {
+      pending = null;
+    }
+  }
+  hist.push(f);
+  if (hist.length > 5) hist.shift();
+  return true;
+}
+
+function setWarn(text, strong){
+  if (!text){ warnEl.hidden = true; warnEl.textContent = ""; return; }
+  warnEl.hidden = false;
+  warnEl.textContent = text;
+  warnEl.classList.toggle("strong", !!strong);
+}
+
+function trendOf(f){
+  let t = "";
+  if (lastTrendF !== null){
+    const d = centsOf(f, lastTrendF);
+    if (d > 3) t = " ↑";
+    else if (d < -3) t = " ↓";
+  }
+  lastTrendF = f;
+  return t;
+}
+
+/* ── 主循环 ─────────────────────── */
+function loop(){
+  requestAnimationFrame(loop);
+  const now = performance.now();
+  if (now - lastFrame < FRAME_MS) return;
+  lastFrame = now;
+
+  analyser.getFloatTimeDomainData(buf);
+  const { rms, freq, clarity } = detectPitch(buf, audioCtx.sampleRate);
+  lvlBar.style.width = Math.min(100, rms * 900) + "%";
+
+  if (freq > 0 && acceptFreq(freq, clarity)) lastValid = now;
+
+  const stale = now - lastValid > HOLD_MS;
+  if (stale){
+    /* 读数过期立即清空：绝不把陈旧的"偏低·拧紧"留在屏幕上 */
+    hist = []; pending = null; autoCand = null;
+    smoothCents = null; dispFreq = null; lastTrendF = null;
+    tunedFrames = 0; tunedLock = false;
+  }
+
+  if (!stale && hist.length >= 2){
+    const f = median(hist);
+    let idx = activeIdx;
+
+    if (autoMode || idx < 0){
+      let bestC = Infinity, bestI = -1;
+      STRINGS.forEach((s, i) => {
+        const c = centsOf(f, s.hz);
+        if (Math.abs(c) < Math.abs(bestC)){ bestC = c; bestI = i; }
+      });
+      /* 只有落在合理偏差内才认弦；超出就不锁定、不切换 */
+      if (Math.abs(bestC) <= MATCH_CENTS){
+        if (bestI !== activeIdx){
+          autoCand = (autoCand && autoCand.i === bestI)
+            ? { i: bestI, n: autoCand.n + 1 } : { i: bestI, n: 1 };
+          if (autoCand.n >= 3){ setActive(bestI); autoCand = null; }
+        } else {
+          autoCand = null;
+        }
+      } else {
+        autoCand = null;
+      }
+      idx = activeIdx;
+    }
+
+    if (idx >= 0) render(f, centsOf(f, STRINGS[idx].hz), now);
+    else renderNoTarget(f, now);
+  } else {
+    idle();
+  }
+}
+
+/* ── 渲染：安全闸 + 自适应平滑 ───────── */
+function render(f, cents, now){
+  if (smoothCents === null){
+    smoothCents = cents;
+  } else {
+    const diff = cents - smoothCents;
+    const a = Math.abs(diff) > 20 ? 0.5
+            : Math.abs(diff) > 6  ? 0.22
+            : 0.12;
+    smoothCents += diff * a;
+  }
+
+  if (Math.abs(cents) <= OK_CENTS) tunedFrames++; else tunedFrames = 0;
+  tunedLock = tunedLock ? Math.abs(cents) <= 10 : tunedFrames >= LOCK_FRAMES;
+
+  /* 气泡与指针使用同一个裁剪值，避免旧版"数字 +2400¢ 而指针钉在边缘"的矛盾 */
+  const shown = Math.max(-RANGE, Math.min(RANGE, tunedLock ? 0 : smoothCents));
+  markerEl.style.left = (50 + shown / RANGE * 50) + "%";
+  bubbleEl.textContent = tunedLock ? "0"
+    : (shown > 0 ? "+" : "") + Math.round(shown);
+  bubbleEl.classList.toggle("ok", tunedLock);
+  /* 指针钉在标尺边缘时把气泡染色，避免 ±50¢ 被误读成"只差 50 音分" */
+  bubbleEl.classList.toggle("out", !tunedLock && Math.abs(smoothCents) > RANGE);
+
+  /* 跨半音以上的跳变直接跟上真实读数，避免平滑值落后于警告文案造成自相矛盾 */
+  if (dispFreq === null || Math.abs(centsOf(f, dispFreq)) > 100) dispFreq = f;
+  else dispFreq += (f - dispFreq) * 0.25;
+  freqVal.textContent = dispFreq.toFixed(1);
+  freqBox.classList.toggle("ok", tunedLock);
+
+  const s = STRINGS[activeIdx];
+  const note = `${s.note}${s.oct}`;
+  const trend = trendOf(f);
+  readingLine.textContent =
+    `当前 ${dispFreq.toFixed(1)} Hz · 目标 ${s.hz.toFixed(2)} Hz · ` +
+    `${cents >= 0 ? "+" : ""}${Math.round(cents)}¢${trend}`;
+
+  const age = now - lastValid;
+  statusEl.className = "status";
+  let warn = "", strong = false;
+
+  if (cents > DANGER_CENTS){
+    /* 最高优先级：无论读数多新，一旦明显偏高就禁止继续拧紧 */
+    statusEl.classList.add("danger");
+    statusEl.textContent = "⚠ 明显偏高 · 请放松琴钮";
+    warn = `停止拧紧！当前 ${dispFreq.toFixed(1)} Hz 比 ${note} 弦目标高出 ${Math.round(cents)} 音分，继续拧紧可能断弦。请放松琴钮，再重新拨弦核对。`;
+    strong = true;
+  } else if (cents < -OCTAVE_GUARD){
+    /* 八度误判专用闸：-1200¢ 这类读数绝不可能是"弦太松"，禁止任何拧紧指令 */
+    statusEl.classList.add("danger");
+    statusEl.textContent = "⚠ 识别异常 · 请勿拧紧";
+    warn = `读数 ${dispFreq.toFixed(1)} Hz 比 ${note} 弦低 ${Math.round(-cents)} 音分，远超正常调弦范围，极可能是八度或谐波误判。请重新拨响空弦并核对当前/目标频率，确认前绝对不要拧动琴钮。`;
+    strong = true;
+  } else if (age > STALE_MS){
+    /* 读数衰减后不再给任何方向指令 —— 防止对着冻结的"偏低"一直拧 */
+    statusEl.classList.add("stale");
+    statusEl.textContent = "读数已衰减 · 请重新拨弦";
+    warn = "上一读数已经过期，页面不会据此给出拧紧/放松指令。请重新拨响空弦获得新读数。";
+  } else if (cents > MATCH_CENTS){
+    statusEl.classList.add("unknown");
+    statusEl.textContent = "偏高过多 · 未匹配";
+    warn = `检测到 ${dispFreq.toFixed(1)} Hz，比 ${note} 弦高 ${Math.round(cents)} 音分。可能是泛音、别的弦或选错了弦；确认前不要拧动琴钮，先放松再重拨。`;
+  } else if (cents < -MATCH_CENTS){
+    statusEl.classList.add("low");
+    statusEl.textContent = "大幅偏低 · 极缓慢拧紧";
+    warn = `比 ${note} 弦低 ${Math.round(-cents)} 音分。先确认弹的是空弦且选弦正确，然后每次只拧 1/8 圈，拧完必须重新拨弦；读数若不上升请立刻停手。`;
+  } else if (tunedLock){
+    statusEl.classList.add("ok");
+    statusEl.textContent = "✓ 准了 · 可以停手";
+  } else if (cents < -OK_CENTS){
+    statusEl.classList.add("low");
+    statusEl.textContent = "偏低 · 少量拧紧";
+    warn = "每次只拧 1/8 圈，拧完立刻重新拨弦看新读数。若读数长时间不上升，请停下检查是否识别有误。";
+  } else {
+    statusEl.classList.add("high");
+    statusEl.textContent = "偏高 · 放松琴钮";
+  }
+  setWarn(warn, strong);
+}
+
+function renderNoTarget(f, now){
+  /* 跨半音以上的跳变直接跟上真实读数，避免平滑值落后于警告文案造成自相矛盾 */
+  if (dispFreq === null || Math.abs(centsOf(f, dispFreq)) > 100) dispFreq = f;
+  else dispFreq += (f - dispFreq) * 0.25;
+  freqVal.textContent = dispFreq.toFixed(1);
+  freqBox.classList.remove("ok");
+  markerEl.style.left = "50%";
+  bubbleEl.textContent = "–";
+  bubbleEl.classList.remove("ok", "out");
+  tunedFrames = 0; tunedLock = false; smoothCents = null;
+  readingLine.textContent = `当前 ${dispFreq.toFixed(1)} Hz · 等待更清晰的空弦音${trendOf(f)}`;
+  statusEl.className = "status unknown";
+  statusEl.textContent = now - lastValid > STALE_MS ? "请重新拨弦" : "未匹配到标准弦";
+  setWarn("当前读数与六根标准弦都相差超过半个音，可能是泛音、杂音或没弹空弦。请重新拨响一根空弦；确认前不要拧动琴钮。", false);
+}
+
+function idle(){
+  markerEl.style.left = "50%";
+  bubbleEl.textContent = "–";
+  bubbleEl.classList.remove("ok", "out");
+  freqVal.textContent = "--";
+  freqBox.classList.remove("ok");
+  statusEl.className = "status";
+  statusEl.textContent = activeIdx >= 0 ? "拨响选定的琴弦" : "拨响任意一根弦";
+  readingLine.textContent = activeIdx >= 0
+    ? `目标 ${STRINGS[activeIdx].hz.toFixed(2)} Hz · 等待拨弦`
+    : "自动识别 · 等待拨弦";
+  setWarn("", false);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- App 图标简化版：保留几何吉他识别特征，去除小尺寸下会糊的细节 -->
+  <!-- 白色圆角背景 -->
+  <rect width="512" height="512" rx="112" fill="#ffffff"/>
+
+  <!-- 琴身：两大一小外切圆 8 字轮廓（加粗适应小尺寸） -->
+  <path d="M 256,452
+           A 100,100 0 1 1 256,252
+           A 66,66 0 1 1 256,120
+           A 66,66 0 0 1 256,252
+           A 100,100 0 1 1 256,452 Z"
+        fill="none" stroke="#1c1c1c" stroke-width="17" stroke-linejoin="round"/>
+
+  <!-- 琴颈 + 琴枕 -->
+  <path d="M 222,120 L 228,52 M 290,120 L 284,52"
+        fill="none" stroke="#1c1c1c" stroke-width="17" stroke-linecap="round"/>
+  <line x1="224" y1="52" x2="288" y2="52" stroke="#1c1c1c" stroke-width="17" stroke-linecap="round"/>
+
+  <!-- 音孔：实心绿环，品牌色点睛 -->
+  <circle cx="256" cy="186" r="30" fill="none" stroke="#5cab2e" stroke-width="15"/>
+
+  <!-- 弦轴：琴枕上三个小点 -->
+  <g fill="#1c1c1c">
+    <circle cx="230" cy="52" r="5"/>
+    <circle cx="256" cy="52" r="5"/>
+    <circle cx="282" cy="52" r="5"/>
+  </g>
+</svg>

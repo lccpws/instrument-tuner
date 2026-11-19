@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!--
+    琴头徽章 · App 图标版（白底）
+    几何构造：
+    · 整体对称于中轴 x=256
+    · 顶冠由一主二辅三圆相切生成的“双角+中凹”轮廓
+    · 三对弦轴沿两侧等弧长分布，轴心共圆
+    · 中央弦槽为黄金比例收窄的梯形
+    · 六弦由弦槽顶端等距放射至琴颈根
+  -->
+  <rect width="512" height="512" rx="112" fill="#ffffff"/>
+
+  <!-- 徽章细环 -->
+  <circle cx="256" cy="258" r="212" fill="none" stroke="#1c1c1c" stroke-width="6" opacity="0.12"/>
+
+  <!-- ===== 琴头主体：双角顶冠 + 对称收窄琴颈（饱满版） ===== -->
+  <path d="M 256,140
+           C 234,140 216,132 200,114
+           C 188,100 174,92 158,96
+           C 148,116 144,140 146,170
+           C 148,220 152,272 168,318
+           C 184,364 208,392 226,410
+           L 286,410
+           C 304,392 328,364 344,318
+           C 360,272 364,220 366,170
+           C 368,140 364,116 354,96
+           C 338,92 324,100 312,114
+           C 296,132 278,140 256,140 Z"
+        fill="#1c1c1c"/>
+
+  <!-- ===== 中央弦槽：内凹留白 ===== -->
+  <path d="M 236,140 L 276,140 L 268,410 L 244,410 Z" fill="#ffffff" opacity="0.09"/>
+
+  <!-- ===== 六根弦轴：三对，轴心共圆 ===== -->
+  <g>
+    <circle cx="146" cy="164" r="23" fill="#ffffff" stroke="#1c1c1c" stroke-width="6"/>
+    <circle cx="154" cy="232" r="23" fill="#ffffff" stroke="#1c1c1c" stroke-width="6"/>
+    <circle cx="170" cy="300" r="23" fill="#ffffff" stroke="#1c1c1c" stroke-width="6"/>
+    <circle cx="366" cy="164" r="23" fill="#ffffff" stroke="#1c1c1c" stroke-width="6"/>
+    <circle cx="358" cy="232" r="23" fill="#ffffff" stroke="#1c1c1c" stroke-width="6"/>
+    <circle cx="342" cy="300" r="23" fill="#ffffff" stroke="#1c1c1c" stroke-width="6"/>
+  </g>
+
+  <!-- ===== 六弦：等距放射，间距加大以便辨识 ===== -->
+  <g stroke="#5cab2e" stroke-width="2.6" opacity="0.95">
+    <line x1="240" y1="142" x2="247" y2="408"/>
+    <line x1="246" y1="142" x2="251" y2="408"/>
+    <line x1="252" y1="142" x2="254" y2="408"/>
+    <line x1="260" y1="142" x2="258" y2="408"/>
+    <line x1="266" y1="142" x2="261" y2="408"/>
+    <line x1="272" y1="142" x2="265" y2="408"/>
+  </g>
+
+  <!-- 琴枕 -->
+  <line x1="234" y1="140" x2="278" y2="140" stroke="#ffffff" stroke-width="6" stroke-linecap="round"/>
+</svg>
