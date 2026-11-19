@@ -317,37 +317,46 @@ button:focus-visible{ outline:2px solid var(--green); outline-offset:3px; }
 @media (prefers-reduced-motion:reduce){
   *{ transition:none !important; animation:none !important; }
 }
+
+  /* 语言切换按钮 */
+  .lang-btn{ position:fixed; top:12px; right:12px; z-index:99; min-width:40px; height:32px;
+    padding:0 10px; border-radius:18px; border:1px solid rgba(255,255,255,.28);
+    background:rgba(15,18,24,.55); color:#fff; font:600 13px/1 system-ui,-apple-system,sans-serif;
+    cursor:pointer; backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); }
+  .lang-btn:active{ transform:scale(.94); }
 </style>
 </head>
 <body>
 
+<button id="langBtn" class="lang-btn" aria-label="Switch Language">EN</button>
+
 <div id="welcome">
   <div class="geo-top"><span class="ln"></span><span class="mk">Est. in tune</span><span class="ln r"></span></div>
-  <img class="logo" src="logo.png" alt="调弦 Logo">
+  <img class="logo" src="logo.png" data-i18n-alt="logoAlt" alt="Tune logo">
   <div class="brandline">
-    <h1>调弦</h1>
+    <h1 data-i18n="appName">调弦</h1>
     <span class="en">Instrument Tuner</span>
   </div>
-  <p class="tagline">让每一根空弦，都回归它本来的音高</p>
+  <p class="tagline" data-i18n="tagline">让每一根空弦，都回归它本来的音高</p>
   <div class="inst-switch" id="welcomeInst"></div>
   <div class="features">
     <div class="feature">
       <div class="ic"><svg viewBox="0 0 24 24"><path d="M3 12h2l2-6 3 12 3-9 2 6h6"/></svg></div>
-      <div class="t"><b>精准识别</b>YIN 基频算法</div>
+      <div class="t" data-i18n-html="feat1"><b>精准识别</b>YIN 基频算法</div>
     </div>
     <div class="feature">
       <div class="ic"><svg viewBox="0 0 24 24"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/><path d="M9 12l2 2 4-4"/></svg></div>
-      <div class="t"><b>安全调弦</b>断弦风险提示</div>
+      <div class="t" data-i18n-html="feat2"><b>安全调弦</b>断弦风险提示</div>
     </div>
     <div class="feature">
       <div class="ic"><svg viewBox="0 0 24 24"><path d="M5 12a7 7 0 0114 0"/><path d="M12 12l4-4"/><circle cx="12" cy="12" r="1.5"/></svg></div>
-      <div class="t"><b>完全离线</b>无需联网</div>
+      <div class="t" data-i18n-html="feat3"><b>完全离线</b>无需联网</div>
     </div>
   </div>
   <div class="actions">
-    <button id="startBtn">开 始 调 弦</button>
+    <button id="startBtn" data-i18n="start">开 始 调 弦</button>
     <div id="gateErr"></div>
-    <div class="hint">首次使用需授权麦克风 · 建议在安静环境中</div>
+    <div class="hint" data-i18n="hint">首次使用需授权麦克风 · 建议在安静环境中</div>
   </div>
   <footer id="welcomeFoot">精准校音 · 完全离线 · 吉他标准定弦 E A D G B E</footer>
 </div>
@@ -355,10 +364,10 @@ button:focus-visible{ outline:2px solid var(--green); outline-offset:3px; }
 <div class="wrap">
   <header>
     <div class="brand">
-      <h1>调弦</h1>
+      <h1 data-i18n="appName">调弦</h1>
       <span class="en">Instrument Tuner</span>
     </div>
-    <button id="autoBtn" class="on"><span class="dot"></span>自动识别</button>
+    <button id="autoBtn" class="on" data-i18n-html="autoBtn"><span class="dot"></span>自动识别</button>
   </header>
   <div class="inst-switch" id="tunerInst"></div>
 
@@ -366,8 +375,8 @@ button:focus-visible{ outline:2px solid var(--green); outline-offset:3px; }
     <div class="freq-display" id="freqBox">
       <span class="num" id="freqVal">--</span><span class="unit">Hz</span>
     </div>
-    <div class="target" id="targetLine">自动识别 · 拨响任意一根弦</div>
-    <div class="reading" id="readingLine">等待拨弦</div>
+    <div class="target" id="targetLine" data-i18n="autoPluck">自动识别 · 拨响任意一根弦</div>
+    <div class="reading" id="readingLine" data-i18n="waitPluck">等待拨弦</div>
 
     <div class="ruler" id="ruler">
       <div class="track"></div>
@@ -381,7 +390,7 @@ button:focus-visible{ outline:2px solid var(--green); outline-offset:3px; }
 
     <div class="notes" id="notes"></div>
 
-    <div class="status" id="status">拨响任意一根弦</div>
+    <div class="status" id="status" data-i18n="pluckAny">拨响任意一根弦</div>
     <div class="lvl"><i id="lvlBar"></i></div>
   </div>
 
@@ -404,7 +413,7 @@ button:focus-visible{ outline:2px solid var(--green); outline-offset:3px; }
     <div class="pcol" id="pegRight"></div>
   </div>
 
-  <footer>
+  <footer data-i18n-html="safetyFoot">
     <b>安全调弦</b> · 每次只拧 1/8 圈，拧完必须重新拨弦核对；先放松再往回拧，不要一次拧到位。<br>
     若读数不随拧动上升、或页面提示明显偏高，请立刻停手。建议在安静环境中使用，手机距琴弦 30–50 cm。
   </footer>
@@ -412,6 +421,162 @@ button:focus-visible{ outline:2px solid var(--green); outline-offset:3px; }
 
 <script>
 "use strict";
+
+
+/* ── 国际化 i18n ─────────────────────────── */
+const I18N = {
+  zh: {
+    appName:"调弦", title:"调弦 · 乐器调音器", logoAlt:"调弦 Logo",
+    guitarName:"吉他",
+    welcomeFootTpl:"精准校音 · 完全离线 · {0}标准定弦 {1}",
+    tagline:"让每一根空弦，都回归它本来的音高",
+    feat1:"<b>精准识别</b>YIN 基频算法",
+    feat2:"<b>安全调弦</b>断弦风险提示",
+    feat3:"<b>完全离线</b>无需联网",
+    start:"开 始 调 弦", starting:"正在开启…", retry:"重 试 开 启",
+    hint:"首次使用需授权麦克风 · 建议在安静环境中",
+    welcomeFoot:"精准校音 · 完全离线 · 标准定弦 E A D G B E",
+    autoBtn:"<span class='dot'></span>自动识别",
+    autoPluck:"自动识别 · 拨响任意一根弦",
+    waitPluck:"等待拨弦", pluckAny:"拨响任意一根弦", pluckSelected:"拨响选定的琴弦",
+    repluck:"请重新拨弦", autoWait:"自动识别 · 等待拨弦",
+    stringTarget:"{0} 弦 · 目标 {1} Hz",
+    targetWait:"目标 {0} Hz · 等待拨弦",
+    ariaString:"{0} 弦",
+    safetyFoot:"<b>安全调弦</b> · 每次只拧 1/8 圈，拧完必须重新拨弦核对；先放松再往回拧，不要一次拧到位。<br>若读数不随拧动上升、或页面提示明显偏高，请立刻停手。建议在安静环境中使用，手机距琴弦 30–50 cm。",
+    micDenied:"麦克风不可用。请到 系统设置 → 应用 → 调弦 → 权限，确认「麦克风」已允许，然后返回重试。",
+    micNotFound:"未检测到麦克风设备，请检查手机麦克风是否正常。",
+    micBusy:"麦克风正被其他应用占用，请关闭其他录音/通话应用后重试。",
+    micPrefix:"无法访问麦克风：", micUnknown:"未知错误",
+    readingTarget:"当前 {0} Hz · 目标 {1} Hz · {2}{3}¢{4}",
+    stHarmonic:"⚠ 疑似谐波 · 请重新拨弦",
+    wHarmonic:"当前 {0} Hz 比 {1} 弦目标高出 {2} 音分，超出正常调弦范围，很可能是琴弦太松时的低次谐波被误检，并非真的拧过头。请先确认拨的是空弦、选弦正确；若弦仍很松，请继续缓慢拧紧，不要按“偏高”处理而放松。",
+    stHighDanger:"⚠ 明显偏高 · 先停手确认",
+    wHighDanger:"请立即停止拧动！当前 {0} Hz 比 {1} 弦目标高出 {2} 音分。先重新拨响空弦、核对选弦：若确实拧过头，请放松琴钮（继续拧紧会断弦）；若琴弦仍很松，这个数字可能是谐波误判，不要放松，继续缓慢拧紧即可。",
+    stOctave:"⚠ 识别异常 · 请勿拧紧",
+    wOctave:"读数 {0} Hz 比 {1} 弦低 {2} 音分，远超正常调弦范围，极可能是八度或谐波误判。请重新拨响空弦并核对当前/目标频率，确认前绝对不要拧动琴钮。",
+    stStale:"读数已衰减 · 请重新拨弦",
+    wStale:"上一读数已经过期，页面不会据此给出拧紧/放松指令。请重新拨响空弦获得新读数。",
+    stTooHigh:"偏高过多 · 未匹配",
+    wTooHigh:"检测到 {0} Hz，比 {1} 弦高 {2} 音分。可能是泛音、别的弦或选错了弦；确认前不要拧动琴钮，先放松再重拨。",
+    stVeryLow:"大幅偏低 · 极缓慢拧紧",
+    wVeryLow:"比 {0} 弦低 {1} 音分。先确认弹的是空弦且选弦正确，然后每次只拧 1/8 圈，拧完必须重新拨弦；读数若不上升请立刻停手。",
+    stInTune:"✓ 准了 · 可以停手",
+    stLow:"偏低 · 少量拧紧",
+    wLow:"每次只拧 1/8 圈，拧完立刻重新拨弦看新读数。若读数长时间不上升，请停下检查是否识别有误。",
+    stHigh:"偏高 · 放松琴钮",
+    readingNoTarget:"当前 {0} Hz · 等待更清晰的空弦音{1}",
+    stNoTarget:"未匹配到标准弦",
+    wNoTarget:"当前读数与{0}的 {1} 根标准弦都相差超过半个音，可能是泛音、杂音或没弹空弦。请重新拨响一根空弦；确认前不要拧动琴钮。",
+    readingTooLow:"检测到 {0} Hz · 低于{1}最低空弦，读数不可信",
+    stTooLowFreq:"⚠ 频率过低 · 弦还太松",
+    wTooLow:"当前读数低于{0}最低空弦 {1}（{2} Hz），说明琴弦还没拉紧，显示的数字可能是弦的低次谐波而非真实音高，不能用来判断音准。请继续缓慢拧紧（每次 1/8 圈、拧完重新拨弦），等读数升到 {2} Hz 以上再按指引微调。"
+  },
+  en: {
+    appName:"Tune", title:"Tune · Instrument Tuner", logoAlt:"Tune logo",
+    guitarName:"guitar",
+    welcomeFootTpl:"Accurate tuning · Fully offline · {0} standard tuning {1}",
+    tagline:"Bring every open string back to its true pitch",
+    feat1:"<b>Precise detection</b>YIN pitch algorithm",
+    feat2:"<b>Safe tuning</b>String-break alerts",
+    feat3:"<b>Fully offline</b>No internet required",
+    start:"S T A R T   T U N I N G", starting:"Starting…", retry:"R E T R Y",
+    hint:"Microphone access needed on first use · Best in a quiet place",
+    welcomeFoot:"Accurate tuning · Fully offline · Standard tuning E A D G B E",
+    autoBtn:"<span class='dot'></span>Auto",
+    autoPluck:"Auto detect · Pluck any open string",
+    waitPluck:"Waiting for a note", pluckAny:"Pluck any open string", pluckSelected:"Pluck the selected string",
+    repluck:"Pluck again", autoWait:"Auto detect · Waiting for a note",
+    stringTarget:"{0} string · Target {1} Hz",
+    targetWait:"Target {0} Hz · Waiting for a note",
+    ariaString:"{0} string",
+    safetyFoot:"<b>Safe tuning</b> · Turn only 1/8 of a turn at a time, then pluck again to check. Loosen first, then tighten back gradually — never tighten straight to pitch.<br>If the reading does not rise as you tighten, or the app shows a clearly high reading, stop immediately. Use in a quiet place, with the phone 30–50 cm from the guitar.",
+    micDenied:"Microphone unavailable. Go to Settings → Apps → Tune → Permissions, make sure Microphone is allowed, then come back and retry.",
+    micNotFound:"No microphone detected. Please check that your device microphone works.",
+    micBusy:"Microphone is in use by another app. Close other recording or call apps and retry.",
+    micPrefix:"Cannot access microphone: ", micUnknown:"Unknown error",
+    readingTarget:"Now {0} Hz · Target {1} Hz · {2}{3}¢{4}",
+    stHarmonic:"⚠ Possible harmonic · Pluck again",
+    wHarmonic:"The current {0} Hz is {2} cents above the {1} string target, beyond the normal tuning range. This is likely a lower harmonic from a very loose string being misdetected, not a genuinely over-tightened string. First confirm you plucked an open string and the correct string is selected; if the string is still loose, keep tightening slowly — do not loosen as if it were too high.",
+    stHighDanger:"⚠ Much too high · Stop and check",
+    wHighDanger:"Stop turning immediately! The current {0} Hz is {2} cents above the {1} string target. Pluck the open string again and double-check the selected string: if it really is over-tightened, loosen the peg (tightening further may break the string); if the string is still loose, this reading may be a harmonic misdetection — do not loosen, just keep tightening slowly.",
+    stOctave:"⚠ Detection error · Do not tighten",
+    wOctave:"The reading {0} Hz is {2} cents below the {1} string, far beyond the normal tuning range — most likely an octave or harmonic misdetection. Pluck the open string again and check the current/target frequencies; do not turn the peg until confirmed.",
+    stStale:"Reading expired · Pluck again",
+    wStale:"The previous reading has expired. No tighten/loosen advice will be given based on it. Pluck an open string again for a fresh reading.",
+    stTooHigh:"Too high · No match",
+    wTooHigh:"Detected {0} Hz, {2} cents above the {1} string. It may be a harmonic, another string, or the wrong string selected. Do not turn the peg until confirmed; loosen first, then pluck again.",
+    stVeryLow:"Far too low · Tighten very slowly",
+    wVeryLow:"{1} cents below the {0} string. First confirm you plucked an open string and selected the right one, then turn only 1/8 of a turn at a time and pluck again after each turn; stop immediately if the reading does not rise.",
+    stInTune:"✓ In tune · Stop here",
+    stLow:"A little flat · Tighten slightly",
+    wLow:"Turn only 1/8 of a turn at a time, then pluck again right away to see the new reading. If the reading does not rise for a while, stop and check for a detection problem.",
+    stHigh:"A little sharp · Loosen the peg",
+    readingNoTarget:"Now {0} Hz · Waiting for a cleaner open-string tone{1}",
+    stNoTarget:"No string matched",
+    wNoTarget:"The reading is more than a semitone from all {1} standard strings of the {0}. It may be a harmonic, noise, or not an open string. Pluck an open string again; do not turn the peg until confirmed.",
+    readingTooLow:"Detected {0} Hz · Below the lowest {1} string; reading unreliable",
+    stTooLowFreq:"⚠ Frequency too low · String still loose",
+    wTooLow:"The reading is below the {0} lowest open string {1} ({2} Hz), which means the string is not tightened yet. The number shown is likely a lower harmonic rather than the true pitch and cannot be used to judge tuning. Keep tightening slowly (1/8 of a turn at a time, pluck again after each turn) until the reading rises above {2} Hz, then make fine adjustments."
+  }
+};
+let lang = "zh";
+function t(key, ...args){
+  let out = (I18N[lang] && I18N[lang][key]) || (I18N.zh[key]) || key;
+  args.forEach((a, i) => { out = out.split("{" + i + "}").join(String(a)); });
+  return out;
+}
+function initLang(){
+  let saved = null;
+  try { saved = localStorage.getItem("tuner-lang"); } catch(e){}
+  if (saved === "zh" || saved === "en") lang = saved;
+  else lang = /^zh/i.test(navigator.language || "") ? "zh" : "en";
+}
+/* 当前乐器名 / 定弦，按语言本地化 */
+function instName(){ return inst ? (lang === "zh" ? inst.name : inst.en) : ""; }
+function instTuning(){
+  if (!inst) return "";
+  if (lang === "zh") return inst.tuning;
+  return inst.tuning.replace("（高 G）", " (High G)");
+}
+function refreshInstUI(){
+  if (typeof INSTRUMENTS === "undefined") return;
+  [welcomeInst, tunerInst].forEach(function(bar){
+    [...bar.children].forEach(function(b){
+      const it = INSTRUMENTS.find(x => x.id === b.dataset.id);
+      if (it) b.textContent = lang === "zh" ? it.name : it.en;
+    });
+  });
+  if (welcomeFoot) welcomeFoot.textContent = t("welcomeFootTpl", instName(), instTuning());
+}
+function applyStaticI18n(){
+  document.querySelectorAll("[data-i18n]").forEach(function(el){
+    el.textContent = t(el.getAttribute("data-i18n"));
+  });
+  document.querySelectorAll("[data-i18n-html]").forEach(function(el){
+    el.innerHTML = t(el.getAttribute("data-i18n-html"));
+  });
+  document.querySelectorAll("[data-i18n-alt]").forEach(function(el){
+    el.setAttribute("alt", t(el.getAttribute("data-i18n-alt")));
+  });
+  refreshInstUI();
+  if (typeof pegBtns !== "undefined" && pegBtns && pegBtns.length){
+    pegBtns.forEach(function(b, i){
+      if (b && STRINGS[i]) b.setAttribute("aria-label", t("ariaString", STRINGS[i].note + STRINGS[i].oct));
+    });
+  }
+}
+function setLang(l){
+  lang = l;
+  try { localStorage.setItem("tuner-lang", l); } catch(e){}
+  applyStaticI18n();
+  document.title = t("title");
+  const btn = document.getElementById("langBtn");
+  if (btn) btn.textContent = lang === "zh" ? "EN" : "中";
+  if (typeof activeIdx !== "undefined" && typeof setActive === "function") setActive(activeIdx);
+}
+initLang();
+
 
 /* ── 乐器定义 ───────────────────────────
    每种乐器有独立的定弦、音域与检测参数。
@@ -529,7 +694,7 @@ function makePegBtn(i){
   const b = document.createElement("button");
   b.className = "pbtn";
   b.innerHTML = `${s.note}<sub>${s.oct}</sub>`;
-  b.setAttribute("aria-label", `${s.note}${s.oct} 弦`);
+  b.setAttribute("aria-label", t("ariaString", `${s.note}${s.oct}`));
   b.addEventListener("click", () => {
     autoMode = false;
     autoBtn.classList.remove("on");
@@ -596,7 +761,7 @@ function selectInstrument(id){
   tunedFrames = 0; tunedLock = false; lastValid = 0;
 
   autoBtn.classList.add("on");
-  welcomeFoot.textContent = `精准校音 · 完全离线 · ${inst.name}标准定弦 ${inst.tuning}`;
+  welcomeFoot.textContent = t("welcomeFootTpl", instName(), instTuning());
   [welcomeInst, tunerInst].forEach(bar => {
     [...bar.children].forEach(b => b.classList.toggle("on", b.dataset.id === id));
   });
@@ -613,7 +778,7 @@ function selectInstrument(id){
   INSTRUMENTS.forEach(it => {
     const b = document.createElement("button");
     b.type = "button";
-    b.textContent = it.name;
+    b.textContent = lang === "zh" ? it.name : it.en;
     b.dataset.id = it.id;
     b.className = it === inst ? "on" : "";
     b.addEventListener("click", () => selectInstrument(it.id));
@@ -648,12 +813,12 @@ function setActive(i){
     l.classList.toggle("on", Number(l.dataset.i) === i));
 
   if (i < 0){
-    targetLine.textContent = "自动识别 · 拨响任意一根弦";
+    targetLine.textContent = t("autoPluck");
     notesEl.innerHTML = "";
     return;
   }
   const s = STRINGS[i];
-  targetLine.textContent = `${s.note}${s.oct} 弦 · 目标 ${s.hz.toFixed(2)} Hz`;
+  targetLine.textContent = t("stringTarget", `${s.note}${s.oct}`, s.hz.toFixed(2));
   const n = noteNum(s.hz);
   notesEl.innerHTML = "";
   for (let k = -2; k <= 2; k++){
@@ -669,7 +834,7 @@ function setActive(i){
 startBtn.addEventListener("click", async () => {
   gateErr.textContent = "";
   startBtn.disabled = true;
-  startBtn.textContent = "正在开启…";
+  startBtn.textContent = t("starting");
   try {
     const stream = await navigator.mediaDevices.getUserMedia({
       audio: {
@@ -694,17 +859,17 @@ startBtn.addEventListener("click", async () => {
   } catch (e) {
     let msg;
     if (e.name === "NotAllowedError" || e.name === "PermissionDeniedError") {
-      msg = "麦克风不可用。请到 系统设置 → 应用 → 调弦 → 权限，确认「麦克风」已允许，然后返回重试。";
+      msg = t("micDenied");
     } else if (e.name === "NotFoundError" || e.name === "DevicesNotFoundError") {
-      msg = "未检测到麦克风设备，请检查手机麦克风是否正常。";
+      msg = t("micNotFound");
     } else if (e.name === "NotReadableError" || e.name === "TrackStartError") {
-      msg = "麦克风正被其他应用占用，请关闭其他录音/通话应用后重试。";
+      msg = t("micBusy");
     } else {
-      msg = "无法访问麦克风：" + (e.message || e.name || "未知错误");
+      msg = t("micPrefix") + (e.message || e.name || t("micUnknown"));
     }
     gateErr.textContent = msg;
     startBtn.disabled = false;
-    startBtn.textContent = "重 试 开 启";
+    startBtn.textContent = t("retry");
   }
 });
 
@@ -928,9 +1093,9 @@ function render(f, cents, now){
   const s = STRINGS[activeIdx];
   const note = `${s.note}${s.oct}`;
   const trend = trendOf(f);
-  readingLine.textContent =
-    `当前 ${dispFreq.toFixed(1)} Hz · 目标 ${s.hz.toFixed(2)} Hz · ` +
-    `${cents >= 0 ? "+" : ""}${Math.round(cents)}¢${trend}`;
+  readingLine.textContent = t("readingTarget",
+    dispFreq.toFixed(1), s.hz.toFixed(2),
+    cents >= 0 ? "+" : "", Math.round(cents), trend);
 
   const age = now - lastValid;
   statusEl.className = "status";
@@ -941,45 +1106,45 @@ function render(f, cents, now){
        而是松弦的低基频被误检成二/三次谐波（如真实 73Hz 显示成 146–220Hz）。
        绝不能据此让用户放松；正确做法是提示重新拨弦、先确认选弦。 */
     statusEl.classList.add("danger");
-    statusEl.textContent = "⚠ 疑似谐波 · 请重新拨弦";
-    warn = `当前 ${dispFreq.toFixed(1)} Hz 比 ${note} 弦目标高出 ${Math.round(cents)} 音分，超出正常调弦范围，很可能是琴弦太松时的低次谐波被误检，并非真的拧过头。请先确认拨的是空弦、选弦正确；若弦仍很松，请继续缓慢拧紧，不要按"偏高"处理而放松。`;
+    statusEl.textContent = t("stHarmonic");
+    warn = t("wHarmonic", dispFreq.toFixed(1), note, Math.round(cents));
     strong = true;
   } else if (cents > DANGER_CENTS){
     /* 明显偏高：可能是拧过头（危险），也可能是松弦谐波/选错弦。
        一律先停手确认，不武断下"放松"结论——松弦用户被误导放松会更糟。 */
     statusEl.classList.add("danger");
-    statusEl.textContent = "⚠ 明显偏高 · 先停手确认";
-    warn = `请立即停止拧动！当前 ${dispFreq.toFixed(1)} Hz 比 ${note} 弦目标高出 ${Math.round(cents)} 音分。先重新拨响空弦、核对选弦：若确实拧过头，请放松琴钮（继续拧紧会断弦）；若琴弦仍很松，这个数字可能是谐波误判，不要放松，继续缓慢拧紧即可。`;
+    statusEl.textContent = t("stHighDanger");
+    warn = t("wHighDanger", dispFreq.toFixed(1), note, Math.round(cents));
     strong = true;
   } else if (cents < -OCTAVE_GUARD){
     /* 八度误判专用闸：-1200¢ 这类读数绝不可能是"弦太松"，禁止任何拧紧指令 */
     statusEl.classList.add("danger");
-    statusEl.textContent = "⚠ 识别异常 · 请勿拧紧";
-    warn = `读数 ${dispFreq.toFixed(1)} Hz 比 ${note} 弦低 ${Math.round(-cents)} 音分，远超正常调弦范围，极可能是八度或谐波误判。请重新拨响空弦并核对当前/目标频率，确认前绝对不要拧动琴钮。`;
+    statusEl.textContent = t("stOctave");
+    warn = t("wOctave", dispFreq.toFixed(1), note, Math.round(-cents));
     strong = true;
   } else if (age > STALE_MS){
     /* 读数衰减后不再给任何方向指令 —— 防止对着冻结的"偏低"一直拧 */
     statusEl.classList.add("stale");
-    statusEl.textContent = "读数已衰减 · 请重新拨弦";
-    warn = "上一读数已经过期，页面不会据此给出拧紧/放松指令。请重新拨响空弦获得新读数。";
+    statusEl.textContent = t("stStale");
+    warn = t("wStale");
   } else if (cents > MATCH_CENTS){
     statusEl.classList.add("unknown");
-    statusEl.textContent = "偏高过多 · 未匹配";
-    warn = `检测到 ${dispFreq.toFixed(1)} Hz，比 ${note} 弦高 ${Math.round(cents)} 音分。可能是泛音、别的弦或选错了弦；确认前不要拧动琴钮，先放松再重拨。`;
+    statusEl.textContent = t("stTooHigh");
+    warn = t("wTooHigh", dispFreq.toFixed(1), note, Math.round(cents));
   } else if (cents < -MATCH_CENTS){
     statusEl.classList.add("low");
-    statusEl.textContent = "大幅偏低 · 极缓慢拧紧";
-    warn = `比 ${note} 弦低 ${Math.round(-cents)} 音分。先确认弹的是空弦且选弦正确，然后每次只拧 1/8 圈，拧完必须重新拨弦；读数若不上升请立刻停手。`;
+    statusEl.textContent = t("stVeryLow");
+    warn = t("wVeryLow", note, Math.round(-cents));
   } else if (tunedLock){
     statusEl.classList.add("ok");
-    statusEl.textContent = "✓ 准了 · 可以停手";
+    statusEl.textContent = t("stInTune");
   } else if (cents < -OK_CENTS){
     statusEl.classList.add("low");
-    statusEl.textContent = "偏低 · 少量拧紧";
-    warn = "每次只拧 1/8 圈，拧完立刻重新拨弦看新读数。若读数长时间不上升，请停下检查是否识别有误。";
+    statusEl.textContent = t("stLow");
+    warn = t("wLow");
   } else {
     statusEl.classList.add("high");
-    statusEl.textContent = "偏高 · 放松琴钮";
+    statusEl.textContent = t("stHigh");
   }
   setWarn(warn, strong);
 }
@@ -999,10 +1164,10 @@ function renderNoTarget(f, now){
   bubbleEl.textContent = "–";
   bubbleEl.classList.remove("ok", "out");
   tunedFrames = 0; tunedLock = false; smoothCents = null;
-  readingLine.textContent = `当前 ${dispFreq.toFixed(1)} Hz · 等待更清晰的空弦音${trendOf(f)}`;
+  readingLine.textContent = t("readingNoTarget", dispFreq.toFixed(1), trendOf(f));
   statusEl.className = "status unknown";
-  statusEl.textContent = now - lastValid > STALE_MS ? "请重新拨弦" : "未匹配到标准弦";
-  setWarn(`当前读数与${inst.name}的 ${inst.strings.length} 根标准弦都相差超过半个音，可能是泛音、杂音或没弹空弦。请重新拨响一根空弦；确认前不要拧动琴钮。`, false);
+  statusEl.textContent = now - lastValid > STALE_MS ? t("repluck") : t("stNoTarget");
+  setWarn(t("wNoTarget", instName(), inst.strings.length), false);
 }
 
 /* ── 频率过低：弦太松 / 检测到的是次谐波 ─────
@@ -1015,10 +1180,10 @@ function renderTooLow(f, now){
   bubbleEl.textContent = "–";
   bubbleEl.classList.remove("ok", "out");
   const low = inst.strings.reduce((a, b) => a.hz < b.hz ? a : b);
-  readingLine.textContent = `检测到 ${f.toFixed(1)} Hz · 低于${inst.name}最低空弦，读数不可信`;
+  readingLine.textContent = t("readingTooLow", f.toFixed(1), instName());
   statusEl.className = "status low";
-  statusEl.textContent = "⚠ 频率过低 · 弦还太松";
-  setWarn(`当前读数低于${inst.name}最低空弦 ${low.note}${low.oct}（${low.hz.toFixed(2)} Hz），说明琴弦还没拉紧，显示的数字可能是弦的低次谐波而非真实音高，不能用来判断音准。请继续缓慢拧紧（每次 1/8 圈、拧完重新拨弦），等读数升到 ${low.hz.toFixed(0)} Hz 以上再按指引微调。`, false);
+  statusEl.textContent = t("stTooLowFreq");
+  setWarn(t("wTooLow", instName(), `${low.note}${low.oct}`, low.hz.toFixed(2)), false);
 }
 
 function idle(){
@@ -1028,12 +1193,22 @@ function idle(){
   freqVal.textContent = "--";
   freqBox.classList.remove("ok");
   statusEl.className = "status";
-  statusEl.textContent = activeIdx >= 0 ? "拨响选定的琴弦" : "拨响任意一根弦";
+  statusEl.textContent = activeIdx >= 0 ? t("pluckSelected") : t("pluckAny");
   readingLine.textContent = activeIdx >= 0
-    ? `目标 ${STRINGS[activeIdx].hz.toFixed(2)} Hz · 等待拨弦`
-    : "自动识别 · 等待拨弦";
+    ? t("targetWait", STRINGS[activeIdx].hz.toFixed(2))
+    : t("autoWait");
   setWarn("", false);
 }
+
+/* ── 初始化语言显示 ─────────────────────── */
+applyStaticI18n();
+document.title = t("title");
+(function(){
+  const btn = document.getElementById("langBtn");
+  btn.textContent = lang === "zh" ? "EN" : "中";
+  btn.title = "Switch Language / 切换语言";
+  btn.addEventListener("click", function(){ setLang(lang === "zh" ? "en" : "zh"); });
+})();
 </script>
 </body>
 </html>

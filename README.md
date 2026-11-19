@@ -1,6 +1,8 @@
 # 调弦 · 乐器调音器
 
-基于手机/电脑麦克风的免费在线调音器，支持多种弦乐器的标准定弦，单文件 HTML，无需安装、无广告、完全离线。
+[English](README_EN.md)
+
+基于手机/电脑麦克风的免费在线调音器，支持多种弦乐器的标准定弦，单文件 HTML，无需安装、无广告、完全离线。支持中英双语——自动识别系统语言，也可在页面右上角手动切换。
 
 > 从吉他调音器（[guitar-tuner](https://github.com/lccpws/guitar-tuner)）扩展而来，新增尤克里里、贝斯、小提琴支持。
 
@@ -76,6 +78,7 @@
 - **调弦指引**：实时提示"偏低 · 拧紧琴钮" / "偏高 · 放松琴钮"，安全调弦（每次 1/8 圈，拧完重新拨弦）
 - **数据读数**：实时频率、音分偏差、输入电平
 - **信号保持**：拨弦间隙短暂静音时保持读数，不闪烁复位
+- **中英双语界面**：自动识别系统语言（中文/英文），右上角可手动切换并记住选择
 
 ## 使用
 
@@ -105,7 +108,7 @@
 
 **与吉他版共存**
 
-本 App 的包名为 `com.weishuai.instrumenttuner`，显示名「调弦·乐器」；吉他调音器 App（[guitar-tuner](https://github.com/lccpws/guitar-tuner)）的包名为 `com.weishuai.guitartuner`，显示名「调弦」。两者包名不同，可以在同一台设备上**同时安装、互不覆盖**。
+本 App 的包名为 `com.weishuai.instrumenttuner`，显示名「乐器调弦」；吉他调音器 App（[guitar-tuner](https://github.com/lccpws/guitar-tuner)）的包名为 `com.weishuai.guitartuner`，显示名「吉他调音器」。两者包名不同，可以在同一台设备上**同时安装、互不覆盖**。
 
 **本地构建**（需 Node.js、JDK 17、Android SDK platform 34）
 
