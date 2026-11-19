@@ -4,7 +4,7 @@ android {
     namespace "com.weishuai.guitartuner"
     compileSdk rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "com.weishuai.guitartuner"
+        applicationId "com.weishuai.instrumenttuner"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 3

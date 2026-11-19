@@ -101,7 +101,11 @@
 **特性**
 - 页面资源与字体全部内嵌，完全离线可用
 - 针对鸿蒙 4.2 兼容层做了麦克风权限与启动主题适配
-- 蓝色拨片 + 白色民谣吉他琴头 Logo，欢迎页一步进入调弦
+- 蓝色拨片 Logo（无乐器剪影），欢迎页一步进入调弦
+
+**与吉他版共存**
+
+本 App 的包名为 `com.weishuai.instrumenttuner`，显示名「调弦·乐器」；吉他调音器 App（[guitar-tuner](https://github.com/lccpws/guitar-tuner)）的包名为 `com.weishuai.guitartuner`，显示名「调弦」。两者包名不同，可以在同一台设备上**同时安装、互不覆盖**。
 
 **本地构建**（需 Node.js、JDK 17、Android SDK platform 34）
 
